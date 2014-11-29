@@ -1,14 +1,14 @@
 use utils::{outb, inb};
 use core::option::{Option, Some, None};
-use core::container::Container;
+use core::slice::{SlicePrelude};
 use stdio;
 
 static mut shifted: bool = false;
 
-pub static SCAN_CODE_MAPPING: &'static [u8] = bytes!("\
-\x00\x1B1234567890-=\x08\tqwertyuiop[]\n?asdfghjkl;'`?\\zxcvbnm,./?*? ?????????????789-456+1230.?????");
-pub static SCAN_CODE_MAPPING_SHIFTED: &'static [u8] = bytes!("\
-\x00\x1B!@#$%^&*()_+\x08\tQWERTYUIOP{}\n?ASDFGHJKL:\"~?|ZXCVBNM<>??*? ?????????????789-456+1230.?????");
+pub static SCAN_CODE_MAPPING: &'static [u8] = b"\
+\x00\x1B1234567890-=\x08\tqwertyuiop[]\n?asdfghjkl;'`?\\zxcvbnm,./?*? ?????????????789-456+1230.?????";
+pub static SCAN_CODE_MAPPING_SHIFTED: &'static [u8] = b"\
+\x00\x1B!@#$%^&*()_+\x08\tQWERTYUIOP{}\n?ASDFGHJKL:\"~?|ZXCVBNM<>??*? ?????????????789-456+1230.?????";
 
 
 #[no_mangle]
@@ -43,16 +43,16 @@ pub fn change_state(scancode: u8) {
 
 pub fn get_char(scancode: u8) -> Option<u8> {
     if (scancode >= SCAN_CODE_MAPPING.len() as u8
-        || SCAN_CODE_MAPPING[scancode] == ('?' as u8)
+        || SCAN_CODE_MAPPING[scancode as uint] == ('?' as u8)
         || scancode < 2
         || scancode > 63) {
         return None;
-    } 
+    }
     unsafe {
         if shifted {
-            Some(SCAN_CODE_MAPPING_SHIFTED[scancode])
+            Some(SCAN_CODE_MAPPING_SHIFTED[scancode as uint])
         } else {
-            Some(SCAN_CODE_MAPPING[scancode])
+            Some(SCAN_CODE_MAPPING[scancode as uint])
         }
     }
 }

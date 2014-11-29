@@ -1,6 +1,6 @@
 CC=gcc
 LD=ld
-RUSTC := rustc --cfg libc -Z no-landing-pads -O --target i386-intel-linux
+RUSTC := rustc --cfg libc -Z no-landing-pads -O --target i686-unknown-linux-gnu
 NASM=nasm
 QEMU=qemu-system-i386
 BUILDDIR=./build
@@ -24,7 +24,7 @@ $(OBJDIR)/%.asm.o: src/%.asm
 $(OBJDIR)/main.bc: src/main.rs
 	mkdir -p $(OBJDIR)
 	$(RUSTC) src/rust-core/core/lib.rs --out-dir $(BUILDDIR)
-	$(RUSTC) --lib --emit-llvm -L $(BUILDDIR) -o $@ $<
+	$(RUSTC) --crate-type lib --emit ir -L $(BUILDDIR) -o $@ $<
 
 $(OBJDIR)/main.o: $(OBJDIR)/main.bc
 	clang -c -O2 -o $@ $<
@@ -34,7 +34,7 @@ $(BUILDDIR)/loader.bin: src/loader.asm
 	mkdir -p $(BUILDDIR)
 	$(NASM) -o $@ -f bin $<
 
-$(BUILDDIR)/main.elf: src/linker.ld $(OBJS) 
+$(BUILDDIR)/main.elf: src/linker.ld $(OBJS)
 	mkdir -p $(BUILDDIR)
 	$(LD) -Map=$(BUILDDIR)/linker.map -o $@ -T $^ "-(" build/libcore-2e829c2f-0.0.rlib "-)"
 

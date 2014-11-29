@@ -2,10 +2,10 @@ use utils::{outb};
 
 static PIC1		:u16 = 0x20;		/* IO base address for master PIC */
 static PIC2		:u16 = 0xA0;		/* IO base address for slave PIC */
-static PIC1_COMMAND	:u16 = PIC1;
-static PIC1_DATA	:u16 = PIC1 + 1;
-static PIC2_COMMAND	:u16 = PIC2;
-static PIC2_DATA	:u16 = PIC2 + 1;
+static PIC1_COMMAND	:u16 = 0x20;//PIC1;
+static PIC1_DATA	:u16 = 0x21;//PIC1 + 1;
+static PIC2_COMMAND	:u16 = 0xA0;//PIC2;
+static PIC2_DATA	:u16 = 0xA1;//PIC2 + 1;
 
 static ICW1_ICW4	:u8 = 0x01;		/* ICW4 (not) needed */
 static ICW1_INIT	:u8 = 0x10;		/* Initialization - required! */

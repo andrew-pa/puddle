@@ -1,9 +1,9 @@
-#[allow(ctypes)];
-#[no_std];
-#[feature(asm)];
-#[feature(macro_rules)];
+#![allow(ctypes)]
+#![no_std]
+#![feature(asm)]
+#![feature(macro_rules)]
 
-extern mod core;
+extern crate core;
 pub mod idt;
 pub mod kbd;
 pub mod mem;
@@ -19,4 +19,3 @@ pub unsafe fn main() {
     idt::idt_install();
     serial::write("Starting...\n");
 }
-

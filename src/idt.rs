@@ -4,17 +4,17 @@ use utils::outb;
 
 /* Defines an IDT entry */
 #[packed]
-struct IDTEntry {
+pub struct IDTEntry {
     base_lo: u16,
     sel: u16,        /* Our kernel segment goes here! */
     zero: u8,        /* This will ALWAYS be set to 0! */
     flags: u8,       /* Set using the above table! */
     base_hi: u16
-} 
+}
 
 /* Defines an IDT pointer */
 #[packed]
-struct IDTPointer {
+pub struct IDTPointer {
     limit: u16,
     base: u32
 }
@@ -33,14 +33,14 @@ pub static mut idtp: IDTPointer = IDTPointer {limit: 0, base: 0};
 /* Use this function to set an entry in the IDT. A lot simpler
 *  than twiddling with the GDT ;) */
 #[no_mangle]
-fn idt_set_gate(num: u8, f: extern "C" unsafe fn(), sel: u16, flags: u8)
+fn idt_set_gate(num: u8, f: unsafe extern "C" fn(), sel: u16, flags: u8)
 {
     unsafe {
         let base = f as u32;
-        idt[num].sel = sel;
-        idt[num].flags = flags;
-        idt[num].base_hi = (base >> 16) as u16;
-        idt[num].base_lo = (base & ((1 << 16) - 1)) as u16;
+        idt[num as uint].sel = sel;
+        idt[num as uint].flags = flags;
+        idt[num as uint].base_hi = (base >> 16) as u16;
+        idt[num as uint].base_lo = (base & ((1 << 16) - 1)) as u16;
     }
 }
 
@@ -53,7 +53,7 @@ extern {
 pub unsafe fn idt_install() {
     /* Sets the special IDT pointer up  */
     idtp.limit = ((super::core::mem::size_of::<IDTEntry>() * 256) - 1) as u16;
-    idtp.base = &idt as *[IDTEntry, ..256] as u32;
+    idtp.base = &idt as *const [IDTEntry, ..256] as u32;
 
     /* Add any new ISRs to the IDT here using idt_set_gate */
     idt_set_gate(33, int_handler_kbd_wrapper, 0x08, 0x8E);
@@ -68,4 +68,3 @@ pub unsafe fn idt_install() {
     asm!("lidt ($0)" :: "r" (idtp));
     asm!("sti");
 }
-		

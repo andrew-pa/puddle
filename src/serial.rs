@@ -1,11 +1,11 @@
 use utils::{inb, outb};
-use super::core::slice::iter;
+use super::core::slice::{SlicePrelude};
 use super::core::iter::Iterator;
-use super::core::str::as_bytes;
+use super::core::str::{StrPrelude};
 use super::core::option::{Some, None};
 
 static PORT: u16 = 0x3f8;    /* COM1 */
- 
+
 pub fn init() {
     unsafe {
         outb(PORT + 1, 0x00);    // Disable all interrupts
@@ -30,8 +30,7 @@ fn write_byte(b: u8) {
 }
 
 pub fn write(s: &str) {
-    let bytes: &[u8] = as_bytes(s);
-    for b in super::core::slice::iter(bytes) {
-        write_byte(*b);
+    for b in s.bytes() {
+        write_byte(b);
     }
 }

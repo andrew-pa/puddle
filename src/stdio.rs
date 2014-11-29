@@ -1,5 +1,5 @@
-use super::core::str::as_bytes;
-use super::core::slice::iter;
+use super::core::str::{StrPrelude};
+use super::core::slice::{SlicePrelude};
 use super::core::iter::Iterator;
 use super::core::option::{Some, None};
 
@@ -11,9 +11,6 @@ static VGA_HEIGHT : u16 = 24;
 
 static mut curr_x: u16 = 0;
 static mut curr_y: u16 = 0;
-
-static mut fg_color: Color = Green;
-static mut bg_color: Color = Black;
 
 pub enum Color {
     Black       = 0,
@@ -33,6 +30,9 @@ pub enum Color {
     Yellow      = 14,
     White       = 15,
 }
+
+static mut fg_color: Color = Color::Green;
+static mut bg_color: Color = Color::Black;
 
 fn range(lo: uint, hi: uint, it: |uint| ) {
     let mut iter = lo;
@@ -109,8 +109,7 @@ fn make_vgaentry(c: u8, fg: Color, bg: Color) -> u16 {
 }
 
 pub fn write(s: &str) {
-    let bytes : &[u8] = as_bytes(s);
-    for b in super::core::slice::iter(bytes) {
-        putc(*b);
+    for b in s.bytes() {
+        putc(b);
     }
 }
